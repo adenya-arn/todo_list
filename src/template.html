@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do List</title>
+  </head>
+  <body>
+    <form id="project-form">
+      <input type="text" id="project-name" placeholder="New Project" required />
+      <button type="submit">Add Project</button>
+    </form>
+
+    <div id="projects"></div>
+    <div class="todos"></div>
+
+    <div id="todo-details"></div>
+
+    <form action="" id="todo-form">
+      <input type="text" id="title" placeholder="Title" required />
+
+      <input type="text" id="description" placeholder="Description" />
+
+      <input type="date" id="dueDate" />
+
+      <select id="priority">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+
+      <button type="submit">Add Todo</button>
+    </form>
+  </body>
+</html>
