@@ -1,198 +1,167 @@
+import { projects, saveToLocalStorage } from "./app.js";
 import Todo from "./todos.js";
 import Project from "./projects.js";
-import { projects, saveToLocalStorage } from "./app.js";
+
+const projectsContainer = document.getElementById("projects");
+const todosContainer = document.querySelector(".todos");
+const todoDetails = document.getElementById("todo-details");
+const projectFormContainer = document.getElementById("project-form-container");
+const todoFormContainer = document.getElementById("todo-form-container");
+const toggleProjectBtn = document.getElementById("toggle-project-form");
+const toggleTodoBtn = document.getElementById("toggle-todo-form");
+const currentProjectName = document.getElementById("current-project-name");
+
+let currentProject = projects[0]; // default selected project
+
+// Toggle project form
+toggleProjectBtn.addEventListener("click", () => {
+  projectFormContainer.style.display =
+    projectFormContainer.style.display === "none" ? "block" : "none";
+});
+
+// Toggle todo form
+toggleTodoBtn.addEventListener("click", () => {
+  if (!currentProject) return alert("Select a project first!");
+  todoFormContainer.style.display =
+    todoFormContainer.style.display === "none" ? "block" : "none";
+});
+
+export function setCurrentProject(project) {
+  currentProject = project;
+  if (!project) {
+    currentProjectName.textContent = "No Project";
+    todosContainer.innerHTML = "";
+    return;
+  }
+  currentProjectName.textContent = project.name;
+  renderTodos(currentProject);
+  todoFormContainer.style.display = "none"; // hide todo form when switching
+}
 
 export function renderProjects(projects) {
-  const projectContainer = document.getElementById("projects");
-  projectContainer.innerHTML = "";
+  projectsContainer.innerHTML = "";
 
   projects.forEach((project, index) => {
-    const wrapper = document.createElement("div");
+    const projectDiv = document.createElement("div");
 
     const btn = document.createElement("button");
     btn.textContent = project.name;
+    btn.addEventListener("click", () => setCurrentProject(project));
 
-    if (project === currentProject) {
-      btn.style.backgroundColor = "#f4a261";
-    }
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "×";
+    delBtn.style.backgroundColor = "#e76f51";
+    delBtn.style.marginLeft = "0.25rem";
+    delBtn.addEventListener("click", () => {
+      projects.splice(index, 1);
+      saveToLocalStorage(projects);
 
-    btn.addEventListener("click", () => {
-      setCurrentProject(project);
+      if (projects.length === 0) {
+        const newDefault = new Project("Default");
+        projects.push(newDefault);
+      }
+
+      setCurrentProject(projects[0]);
       renderProjects(projects);
-      renderTodos(project);
     });
 
-    //delete project button
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "X";
-
-    deleteBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // 🔥 prevent switching project
-
-      deleteProject(index);
-    });
-
-    wrapper.appendChild(btn);
-    wrapper.appendChild(deleteBtn);
-
-    projectContainer.appendChild(wrapper);
+    projectDiv.appendChild(btn);
+    projectDiv.appendChild(delBtn);
+    projectsContainer.appendChild(projectDiv);
   });
 }
 
 export function renderTodos(project) {
-  const todoContainer = document.querySelector(".todos");
-  todoContainer.innerHTML = "";
+  todosContainer.innerHTML = "";
+
+  if (!project) return;
 
   project.todos.forEach((todo, index) => {
-    const div = document.createElement("div");
+    const card = document.createElement("div");
+    card.innerHTML = `<h3>${todo.title}</h3>
+                      <p>Due: ${todo.dueDate || "Not set"}</p>`;
 
-    div.addEventListener("click", () => {
-      renderTodoDetails(todo);
-    });
-    div.classList.add("todo-item", todo.priority);
-
-    const title = document.createElement("span");
-    title.textContent = `${todo.title} - ${todo.dueDate}`;
-    if (todo.priority === "high") {
-      div.style.borderLeft = "5px solid red";
-    } else if (todo.priority === "medium") {
-      div.style.borderLeft = "5px solid orange";
-    } else {
-      div.style.borderLeft = "5px solid green";
+    // Priority color
+    switch (todo.priority) {
+      case "low":
+        card.style.borderLeft = "5px solid #2a9d8f";
+        break;
+      case "medium":
+        card.style.borderLeft = "5px solid #f4a261";
+        break;
+      case "high":
+        card.style.borderLeft = "5px solid #f70e06ff";
+        break;
     }
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-
-    deleteBtn.addEventListener("click", (evnt) => {
-      evnt.stopPropagation();
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       project.removeTodo(index);
       saveToLocalStorage(projects);
-      renderTodos(project); // re-render
+      renderTodos(project);
+      todoDetails.classList.remove("active");
     });
 
-    div.appendChild(title);
-    div.appendChild(deleteBtn);
+    card.appendChild(delBtn);
 
-    todoContainer.appendChild(div);
+    card.addEventListener("click", () => {
+      todoDetails.classList.add("active");
+      todoDetails.innerHTML = `
+        <button id="close-details">Close</button>
+        <h3>${todo.title}</h3>
+        <p>${todo.description || "No description"}</p>
+        <p><strong>Due:</strong> ${todo.dueDate || "Not set"}</p>
+        <p><strong>Priority:</strong> ${todo.priority}</p>
+        ${todo.notes.length > 0 ? `<p><strong>Notes:</strong> ${todo.notes.join(", ")}</p>` : ""}
+      `;
+      document.getElementById("close-details").addEventListener("click", () => {
+        todoDetails.classList.remove("active");
+      });
+    });
+
+    todosContainer.appendChild(card);
   });
 }
 
-let currentProject = null;
-
-export function setCurrentProject(project) {
-  currentProject = project;
+export function setupProjectForm() {
+  const form = document.getElementById("project-form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = document.getElementById("project-name");
+    if (!input.value.trim()) return;
+    const newProject = new Project(input.value.trim());
+    projects.push(newProject);
+    input.value = "";
+    saveToLocalStorage(projects);
+    renderProjects(projects);
+  });
 }
 
 export function setupTodoForm() {
   const form = document.getElementById("todo-form");
-
-  form.addEventListener("submit", (evnt) => {
-    evnt.preventDefault();
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!currentProject) return alert("Select a project first!");
 
     const title = document.getElementById("title").value;
     const description = document.getElementById("description").value;
     const dueDate = document.getElementById("dueDate").value;
     const priority = document.getElementById("priority").value;
 
-    const newTodo = new Todo(title, description, dueDate, priority);
+    if (!title.trim()) return;
 
-    if (currentProject) {
-      currentProject.addTodo(newTodo);
-      saveToLocalStorage(projects);
-    }
-
-    form.reset();
-    renderTodos(currentProject);
-  });
-}
-
-export function setupProjectForm() {
-  const form = document.getElementById("project-form");
-
-  form.addEventListener("submit", (evnt) => {
-    evnt.preventDefault();
-
-    const name = document.getElementById("project-name").value;
-
-    const newProject = new Project(name);
-    projects.push(newProject);
-    saveToLocalStorage(projects);
+    const newTodo = new Todo(
+      title.trim(),
+      description.trim(),
+      dueDate,
+      priority,
+    );
+    currentProject.addTodo(newTodo);
 
     form.reset();
-    renderProjects(projects);
-    renderTodos(newProject);
-  });
-}
-
-export function renderTodoDetails(todo) {
-  const details = document.getElementById("todo-details");
-  details.innerHTML = "";
-
-  const form = document.createElement("form");
-
-  const title = document.createElement("input");
-  title.value = todo.title;
-
-  const desc = document.createElement("textarea");
-  desc.value = todo.description;
-
-  const due = document.createElement("input");
-  due.type = "date";
-  due.value = todo.dueDate;
-
-  const priority = document.createElement("select");
-
-  ["low", "medium", "high"].forEach((level) => {
-    const option = document.createElement("option");
-    option.value = level;
-    option.textContent = level;
-
-    if (level === todo.priority) {
-      option.selected = true;
-    }
-
-    priority.appendChild(option);
-  });
-
-  const saveBtn = document.createElement("button");
-  saveBtn.textContent = "Save";
-
-  form.appendChild(title);
-  form.appendChild(desc);
-  form.appendChild(due);
-  form.appendChild(priority);
-  form.appendChild(saveBtn);
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    todo.title = title.value;
-    todo.description = desc.value;
-    todo.dueDate = due.value;
-    todo.priority = priority.value;
-
     saveToLocalStorage(projects);
     renderTodos(currentProject);
-    renderTodoDetails(todo);
   });
-
-  details.appendChild(form);
-}
-
-function deleteProject(index) {
-  if (projects.length === 1) {
-    alert("You must have at least one project!");
-    return;
-  }
-
-  projects.splice(index, 1);
-
-  // 👇 switch to another project
-  setCurrentProject(projects[0]);
-
-  saveToLocalStorage(projects);
-
-  renderProjects(projects);
-  renderTodos(projects[0]);
 }

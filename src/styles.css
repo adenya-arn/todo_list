@@ -4,115 +4,36 @@
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
-    padding: 0;
-    min-height: 100vh;
+    padding: 1rem;
+    background-color: #fdf6e3;
+    /* solid background */
     color: #333;
-
-    background: url("./images/hero.jpg") no-repeat center center fixed;
-    background-size: cover;
-}
-
-/* Dark overlay */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: -1;
-}
-
-/* =========================
-   HEADER / NAV
-========================= */
-header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: flex-end;
-    z-index: 10;
-    box-sizing: border-box;
-}
-
-nav {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-nav button {
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: rgba(231, 111, 81, 0.9);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-nav button:hover {
-    background-color: rgba(244, 162, 97, 0.9);
-    transform: scale(1.05);
-}
-
-/* =========================
-   MAIN CONTENT
-========================= */
-#content {
-    padding: 6rem 2rem 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* =========================
-   PROJECTS
-========================= */
-#projects {
-    margin-bottom: 1.5rem;
-}
-
-#projects button {
-    margin: 0.3rem;
-    padding: 0.4rem 0.8rem;
-    border-radius: 5px;
-    border: none;
-    background-color: #264653;
-    color: white;
-    cursor: pointer;
-}
-
-#projects button:hover {
-    background-color: #2a9d8f;
 }
 
 /* =========================
    FORMS
 ========================= */
 form {
-    margin: 1rem 0;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 0.5rem;
-    justify-content: center;
+    margin: 1rem 0;
 }
 
 form input,
 form select,
-form textarea {
-    padding: 0.4rem;
+form button {
+    padding: 0.5rem;
     border-radius: 5px;
-    border: none;
+    border: 1px solid #ccc;
 }
 
 form button {
-    padding: 0.4rem 0.8rem;
     background-color: #e76f51;
-    color: white;
+    color: #fff;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 form button:hover {
@@ -120,110 +41,122 @@ form button:hover {
 }
 
 /* =========================
-   TODOS CONTAINER
+   PROJECTS
 ========================= */
-#todos {
+#projects div {
+    margin-bottom: 0.5rem;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-    max-width: 1000px;
+    align-items: center;
+}
+
+#projects button:first-child {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    flex-grow: 1;
+    text-align: left;
+}
+
+#projects button:last-child {
+    padding: 0 0.4rem;
+    border-radius: 50%;
+    color: #fff;
+    background-color: #e76f51;
+    cursor: pointer;
+    margin-left: 0.25rem;
+}
+
+#projects button:last-child:hover {
+    background-color: #f4a261;
 }
 
 /* =========================
-   STICKY NOTE TODO CARDS
+   TODOS
 ========================= */
-.todo-item {
-    width: 150px;
-    min-height: 140px;
-    padding: 0.6rem;
+.todos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
 
-    background-color: #fff475;
-    /* sticky note yellow */
+.todos>div {
+    background-color: #fffa8d;
+    /* sticky-note style */
+    width: 140px;
+    min-height: 120px;
+    padding: 0.75rem;
     border-radius: 8px;
-
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.25);
-
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Hover effect */
-.todo-item:hover {
-    transform: rotate(-2deg) scale(1.03);
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.35);
+.todos h3 {
+    margin: 0.25rem 0;
+    font-size: 1rem;
 }
 
-/* Text */
-.todo-item span {
+.todos p {
     font-size: 0.85rem;
-    color: #333;
+    margin: 0.25rem 0;
 }
 
-/* Delete button */
-.todo-item button {
-    margin-top: 0.5rem;
-    padding: 0.3rem;
+/* Todo Delete button */
+.todos button {
+    align-self: flex-end;
+    padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
-    background-color: #e63946;
-    color: white;
     border: none;
+    background-color: #e76f51;
+    color: #fff;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-.todo-item button:hover {
-    background-color: #d62828;
+.todos button:hover {
+    background-color: #f4a261;
 }
 
 /* =========================
    TODO DETAILS PANEL
 ========================= */
 #todo-details {
-    margin-top: 2rem;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 1.5rem;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 100%;
+    display: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
 }
 
-#todo-details input,
-#todo-details textarea,
-#todo-details select {
-    width: 100%;
-    margin-bottom: 0.5rem;
+#todo-details.active {
+    display: block;
 }
 
 /* =========================
-   PRIORITY COLORS (LEFT BORDER)
+   CURRENT PROJECT TITLE
 ========================= */
-.todo-item.high {
-    border-left: 6px solid #e63946;
-}
-
-.todo-item.medium {
-    border-left: 6px solid #f4a261;
-}
-
-.todo-item.low {
-    border-left: 6px solid #2a9d8f;
+#current-project-name {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
 @media (max-width: 600px) {
-    #content {
-        padding: 5rem 1rem 2rem;
+    .todos>div {
+        width: 100%;
     }
 
-    .todo-item {
-        width: 120px;
-        min-height: 120px;
+    #projects button:first-child {
+        font-size: 0.9rem;
     }
 }

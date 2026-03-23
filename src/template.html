@@ -6,30 +6,39 @@
     <title>To Do List</title>
   </head>
   <body>
-    <form id="project-form">
-      <input type="text" id="project-name" placeholder="New Project" required />
-      <button type="submit">Add Project</button>
-    </form>
-
+    <button id="toggle-project-form">Add Project</button>
+    <div id="project-form-container" style="display: none">
+      <form id="project-form">
+        <input
+          type="text"
+          id="project-name"
+          placeholder="New Project"
+          required
+        />
+        <button type="submit">Add Project</button>
+      </form>
+    </div>
+    <h3>PROJECTS</h3>
     <div id="projects"></div>
+
+    <button id="toggle-todo-form">Add Todo</button>
+    <div id="todo-form-container" style="display: none">
+      <form id="todo-form">
+        <input type="text" id="title" placeholder="Title" required />
+        <input type="text" id="description" placeholder="Description" />
+        <input type="date" id="dueDate" />
+        <select id="priority">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+        <button type="submit">Add Todo</button>
+      </form>
+    </div>
+    <h3>Todo's</h3>
     <div class="todos"></div>
+    <h2 id="current-project-name"></h2>
 
     <div id="todo-details"></div>
-
-    <form action="" id="todo-form">
-      <input type="text" id="title" placeholder="Title" required />
-
-      <input type="text" id="description" placeholder="Description" />
-
-      <input type="date" id="dueDate" />
-
-      <select id="priority">
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
-
-      <button type="submit">Add Todo</button>
-    </form>
   </body>
 </html>

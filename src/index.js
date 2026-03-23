@@ -11,13 +11,6 @@ import {
 
 import { setupProjectForm } from "./modules/dom.js";
 //test data
-const todo1 = new Todo(
-  "Learn Webpack",
-  "Finish todo project",
-  "2026-03-25",
-  "high",
-);
-defaultProject.addTodo(todo1);
 
 setCurrentProject(defaultProject);
 
